@@ -1,0 +1,105 @@
+{% extends "layout.html" %}
+
+{% block scripts %}
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+{% endblock %}
+
+{% block title %}
+    Upload csv
+{% endblock %}
+
+{% block main %}
+
+  <div class="alert alert-warning alert-dismissible" style="text-align:left;">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    Please read the <strong>instructions below </strong>first before submitting csv file!
+  </div>
+
+
+    <div class="justify">
+        <h3>Instructions:</h3>
+        <ul>
+            <li>Make sure to convert all concentrations to the following: <br>
+            <ul>
+                <li>Ensure that heavy metals (e.g. Arsenic, Cadmium, Chromium etc) concentration are in Parts Per Billion <strong>(ppb)</strong>.</li>
+                <li>Concentrations of COD, DO, Fluoride, Ammonia, Nitrite, Nitrate, and Phosphate in <strong>mg/l or ppm</strong>.</li>
+                <li>Concentrations of E.coli in Most Probable Number <strong>(MPN/100ml)</strong>, Turbidity  <strong>(NTU)</strong>.</li>
+            </ul>
+
+            </li>
+            <li>Ensure that <strong>site attribute information</strong> are present in your csv headers:
+                <ul>
+                    <li>Site ID (<code>site_id</code>)</li>
+                    <li>Date of sample collection (<code>date</code>) in DD/MM/YYYY (e.g. 16/05/2020, 04/01/2020)</li>
+                    <li>Latitude (<code>lat</code>) in decimals</li>
+                    <li>Longitude (<code>lon</code>) in decimals</li>
+                </ul>
+            </li>
+
+            <li>Ensure that <strong>water quality parameters</strong> have the following csv headers:
+                <ul>
+                    <li>Arsenic: <code>arsenic</code></li>
+                    <li>Cadmium: <code>cd</code> </li>
+                    <li>Chemical Oxygen Demand: <code>cod</code> </li>
+                    <li>Chromium: <code>cr</code> </li>
+                    <li>Dissolved Oxygen: <code>do</code> </li>
+                    <li>E.coli: <code>ecoli</code> <i>(Note: No '.' in ecoli)</i></li>
+                    <li>Fluoride: <code>fluoride</code> </li>
+                    <li>Ammoniacal Nitrogen (NH3-N): <code>nh3</code> </li>
+                    <li>Nitrite (NO2-N): <code>no2</code> </li>
+                    <li>Nitrate (NO3-N): <code>no3</code> </li>
+                    <li>Lead: <code>pb</code> </li>
+                    <li>Phosphate (PO4): <code>po4</code> </li>
+                    <li>Turbidity: <code>turbidity</code> </li>
+                </ul>
+            </li>
+
+            <li>Do not put units (i.e. mg/l, ppm, ppb) in headers, but make sure that all concentrations are fully converted.</li>
+            <li>We only accept the aforementioned 13 water quality parameters as of now, but we will consider other water quality parameters in the future.</li>
+            <li>If water quality parameters have missing values, leave the cell blank.</li>
+            <li>Example of the csv format:</li>
+
+            <img id="image_modal" height="70px" width="200px" data-toggle="modal" data-target="#myModal" src='{{url_for('static', filename='guidelines.png')}}'/>
+
+            <!-- The Modal -->
+            <div class="modal fade" id="myModal">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+
+                  <!-- Modal body -->
+                  <div class="modal-body">
+                    <img src='{{url_for('static', filename='guidelines.png')}}'/>
+                  </div>
+
+                  <!-- Modal footer -->
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+
+        </ul>
+    </div>
+
+    <hr>
+
+    <div class="justify">
+    <h3>Upload csv:</h3><br>
+
+      <form action="/csv" method="post" enctype=multipart/form-data>
+        <input type="file" name="file" style="display: inline-block;">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+
+
+
+{% endblock %}

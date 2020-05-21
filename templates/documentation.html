@@ -1,0 +1,160 @@
+{% extends "layout.html" %}
+
+{% block scripts %}
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=default'></script>
+
+{% endblock %}
+
+{% block title %}
+    Documentation
+{% endblock %}
+
+{% block main %}
+<script>
+  var coll = document.getElementsByClassName("collapsible");
+            var i;
+
+            for (i = 0; i < coll.length; i++) {
+              coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.maxHeight){
+                  content.style.maxHeight = null;
+                } else {
+                  content.style.maxHeight = content.scrollHeight + "px";
+                }
+              });
+            }
+</script>
+
+    <div class="justify">
+      <!--<button type="button" class="collapsible">Breaks threshold for subindices</button>
+        <div class="content_collapse">-->
+
+            <form action="/documentation" method="post">
+              <h3 style="display:inline;">Breaks threshold for subindices</h3><button class="btn btn-outline-primary" style="float: right;" type="submit">Download as csv file</button>
+            </form>
+            <br>
+        <div class="table-responsive">
+        <table id="table_id" class="table table-hover">
+        <!--<table id="table_id" class="display">-->
+
+          <thead>
+            <tr>
+
+              {% for item in breaks_column %}
+              <th scope="col">{{item}}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for k,v in list_breaks.items() %}
+            <tr>
+              <th scope="row">{{k}}</th>
+              {% for value in v.values() %}
+              <td>{{value|round(2) }}</td>
+              {% endfor %}
+
+            </tr>
+            {% endfor %}
+          </tbody>
+
+        </table>
+        <p style="font-size: 10px"><i>Note: </i> Sub-index breaks for DO is reversed</p>
+
+
+
+        </div>
+
+    <hr>
+    <!--<button type="button" class="collapsible">Water Quality Standards</button>
+    <div class="content_collapse">-->
+    <h3>Water Quality Index formulae</h3>
+    $$ {WQI =\frac{\sum^r_{i=1}SI_i * W_i}{\sum^r_{i=1}W_i}} $$
+    <br>
+    <smaller>Where i = a water quality parameter,
+    r = number of water quality parameters,
+    SI<sub>i</sub> = subindex of i,
+    W<sub>i</sub> = assigned weight of i
+    </smaller>
+    <br><br>
+    <p>Read the following paper by <a href="https://www.sciencedirect.com/science/article/abs/pii/S0043135400000361">Pesce & Wunderlin (2000)</a> for more information.</p>
+    <hr>
+
+
+        <h3>Water Quality Standards</h3>
+            <br>
+        <div class="table-responsive">
+        <table id="table_id" class="table table-hover">
+        <!--<table id="table_id" class="display">-->
+
+          <thead>
+            <tr>
+              <th scope="col">Classes</th>
+            {% for item in list_breaks.keys() %}
+              <th scope="col">{{item}}</th>
+            {% endfor %}
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for item in list_wql_std %}
+            <tr>
+              {% for value in item.values() %}
+              <td>{{value}}</td>
+              {% endfor %}
+
+            </tr>
+            {% endfor %}
+          </tbody>
+
+        </table>
+
+        <br>
+
+        <h4>Description of classes</h4>
+        <ul>
+        <li><strong>Class 1</strong>:
+        <ul>
+          <li>Conservation of natural environment.</li>
+          <li>Water Supply I – Practically no treatment necessary.</li>
+          <li>Fishery I – Very sensitive aquatic species.</li>
+        </ul>
+        </li>
+
+        <li><strong>Class 2</strong>:
+        <ul>
+          <li>Water Supply II – Conventional treatment required.</li>
+          <li>Fishery II – Sensitive aquatic species.</li>
+          <li>Recreational use with body contact.</li>
+        </ul>
+        </li>
+
+        <li><strong>Class 3</strong>:
+        <ul>
+          <li>Water Supply III – Extensive treatment required.</li>
+          <li>Fishery III – Common, of economic value and tolerant species; livestock drinking.</li>
+          <li>Recreational use with body contact.</li>
+        </ul>
+        </li>
+
+        <li><strong>Class 4</strong>: Irrigation.</li>
+        <li><strong>Class 5</strong>: None of the above.</li>
+        </ul>
+    <p>
+        For more information, please refer to: <a href="https://www.doe.gov.my/portalv1/wp-content/uploads/2019/05/Standard-Kualiti-Air-Kebangsaan.pdf">Annex</a>.
+    </p>
+    <hr>
+
+      </div>
+    </div>
+
+
+
+    <button type="button" class="btn btn-secondary" onclick="topFunction()" id="myBtn">Back to top</button>
+
+
+
+{% endblock %}

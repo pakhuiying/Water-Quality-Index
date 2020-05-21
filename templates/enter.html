@@ -1,0 +1,116 @@
+{% extends "layout.html" %}
+
+{% block scripts %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<!-- Bootstrap Date-Picker Plugin -->
+        <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+
+{% endblock %}
+
+{% block title %}
+    Data Entry
+{% endblock %}
+
+{% block main %}
+
+    <script>
+        function validateForm() {
+            var value = document.getElementById("textbox").value;
+            var location = document.getElementById("location").value;
+            var letters = /^[a-zA-Z]+$/;
+
+          if (document.getElementById("required").value == "" || location.value == "") {
+            alert("Water quality attribute entries must be filled out");
+            return false;
+          }
+
+          if (value.match(letters) || location.match(letters)) {
+            alert("Input must be numeric");
+            return false;
+          }
+
+        }
+
+        $(document).ready(function(){
+          var date_input=$('input[name="date"]'); //our date input has the name "date"
+          var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
+          var options={
+            format: 'dd/mm/yyyy',
+            container: container,
+            todayHighlight: true,
+            autoclose: true,
+          };
+          date_input.datepicker(options);
+        })
+
+    </script>
+
+  <div class="alert alert-warning alert-dismissible" style="text-align:left;">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    Already have data? Upload your files <a href="/csv" class="alert-link">here</a> instead.
+  </div>
+
+
+
+    <form action="/enter" method="post" class="justify" onsubmit="return validateForm()">
+
+        <h4>Enter water quality attributes:</h4><br>
+        <div class="form-group">
+            <input id = "required" autocomplete="off" onclick="enable_text()" autofocus class="form-control" name="site_id" placeholder="Site ID" type="text">
+            <input id="date" autocomplete="off" onclick="enable_text()" autofocus class="form-control" name="date" placeholder="Date (DD-MM-YY)" type="text">
+            <input id = "location" autocomplete="off" onclick="enable_text()" autofocus class="form-control" name="lat" placeholder="Latitude (decimal)" type="text">
+            <input id = "location" autocomplete="off" onclick="enable_text()" autofocus class="form-control" name="lon" placeholder="Longitude (decimal)" type="text">
+
+        </div>
+
+        <hr>
+        <h4>Enter water quality data:</h4><br>
+        <div class="form-group">
+            <label>Arsenic in (ppb):</label>
+            <input id = "textbox" autocomplete="off" autofocus class="form-control" name="arsenic" placeholder="Arsenic (As)" type="text">
+            <br>
+            <label>Cadmium in (ppb):</label>
+            <input id = "textbox" autocomplete="off" autofocus class="form-control" name="cd" placeholder="Cadmium (Cd)" type="text">
+            <br>
+            <label>COD in (mg/l):</label>
+            <input id = "textbox" autocomplete="off" autofocus class="form-control" name="cod" placeholder="Chemical Oxygen Demand" type="text">
+            <br>
+            <label>Cr in (ppb):</label>
+            <input id = "textbox" autocomplete="off" autofocus class="form-control" name="cr" placeholder="Chromium" type="text">
+            <br>
+            <label>DO in (mg/l):</label>
+            <input id = "textbox" autocomplete="off" autofocus class="form-control" name="do" placeholder="Dissolved Oxygen" type="text">
+            <br>
+            <label>E.coli in (MPN/100ml):</label>
+            <input id = "textbox" autocomplete="off" autofocus class="form-control" name="ecoli" placeholder="E.coli" type="text">
+            <br>
+            <label>Fluoride in (mg/l):</label>
+            <input id = "textbox" autocomplete="off" autofocus class="form-control" name="fluoride" placeholder="Fluoride (F)" type="text">
+            <br>
+            <label>Ammonia in (mg/l):</label>
+            <input id = "textbox" autocomplete="off" autofocus class="form-control" name="nh3" placeholder="Ammoniacal (NH3-N)" type="text">
+            <br>
+            <label>Nitrite in (mg/l):</label>
+            <input id = "textbox" autocomplete="off" autofocus class="form-control" name="no2" placeholder="Nitrite (NO2-N)" type="text">
+            <br>
+            <label>Nitrate in (mg/l):</label>
+            <input id = "textbox" autocomplete="off" autofocus class="form-control" name="no3" placeholder="Nitrate (NO3-N)" type="text">
+            <br>
+            <label>Lead in (ppb):</label>
+            <input id = "textbox" autocomplete="off" autofocus class="form-control" name="pb" placeholder="Lead (Pb)" type="text">
+            <br>
+            <label>Phosphate in (mg/l):</label>
+            <input id = "textbox" autocomplete="off" autofocus class="form-control" name="po4" placeholder="Phosphate (PO4)" type="text">
+            <br>
+            <label>Turbidity in (NTU):</label>
+            <input id = "textbox" autocomplete="off" autofocus class="form-control" name="turbidity" placeholder="Turbidity" type="text">
+
+        </div>
+
+        <button class="btn btn-primary" type="submit" style="display=inline-block;">Submit</button>
+        <!--<button class="btn btn-primary" id="submit_wql" type="submit">Submit</button>-->
+    </form>
+{% endblock %}

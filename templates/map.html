@@ -1,0 +1,149 @@
+{% extends "layout.html" %}
+
+{% block scripts %}
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<script src='https://api.mapbox.com/mapbox.js/v3.3.1/mapbox.js'></script>
+<!--<link href='https://api.mapbox.com/mapbox.js/v3.3.1/mapbox.css' rel='stylesheet' />-->
+
+{% endblock %}
+
+{% block title %}
+    Map
+{% endblock %}
+
+{% block main %}
+    <h2 class="justify">Map of your data points</h2>
+    <hr>
+    <div id="map" style="height: 450px;"></div>
+    <p class="justify" id="required"><i>Note: WQI values are site-averaged values.</i></p>
+
+    <script type="text/javascript">
+      // The first parameter are the coordinates of the center of the map
+      // The second parameter is the zoom level
+      L.mapbox.accessToken = 'pk.eyJ1IjoianNvbWEiLCJhIjoibFJmYl9JWSJ9.AUm8d76cbOvVEn2mMeG_ZA';
+      var map = L.map('map').setView([{{lat}}, {{lon}}], 7);
+
+      // {s}, {z}, {x} and {y} are placeholders for map tiles
+      // {x} and {y} are the x/y of where you are on the map
+      // {z} is the zoom level
+      // {s} is the subdomain of cartodb
+        var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+      });
+
+
+     var streets = L.tileLayer(
+    'https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token=' + L.mapbox.accessToken, {
+        tileSize: 512,
+        zoomOffset: -1,
+        attribution: '© <a href="https://apps.mapbox.com/feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    });
+
+    //icons customisation. credit to: https://github.com/pointhi/leaflet-color-markers
+
+    var violetIcon = new L.Icon({
+      iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-violet.png',
+      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41]
+    });
+
+    var blueIcon = new L.Icon({
+      iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41]
+    });
+
+    var greenIcon = new L.Icon({
+      iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41]
+    });
+
+    var yellowIcon = new L.Icon({
+      iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png',
+      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41]
+    });
+
+    var redIcon = new L.Icon({
+      iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41]
+    });
+
+
+      // It even opens up a popup when you click it!
+      var points = L.layerGroup([
+      {% for k,v in avg_dict.items() %}
+          L.marker([{{v.lat}}, {{v.lon}}],{
+            {% if v.class_nonwt =="['Class 1']" %}
+             icon:violetIcon
+            {% elif v.class_nonwt =="['Class 2']" %}
+            icon:blueIcon
+            {% elif v.class_nonwt =="['Class 3']" %}
+            icon:greenIcon
+            {% elif v.class_nonwt =="['Class 4']" %}
+            icon:yellowIcon
+            {% else %}
+            icon:redIcon
+            {% endif %}
+      }).addTo(map)
+          .bindPopup("Site: {{k.upper()}} <br> WQI<sub>NON-WEIGHTED</sub>: {{v.wqi}} <br><strong>{{v.class_nonwt}}</strong>").openPopup(),
+        {% endfor %}
+      ]);
+
+
+      var points_wt = L.layerGroup([
+      {% for k,v in avg_dict.items() %}
+          L.marker([{{v.lat}}, {{v.lon}}],{
+            {% if v.class_wt =="['Class 1']" %}
+             icon:violetIcon
+            {% elif v.class_wt =="['Class 2']" %}
+            icon:blueIcon
+            {% elif v.class_wt =="['Class 3']" %}
+            icon:greenIcon
+            {% elif v.class_wt =="['Class 4']" %}
+            icon:yellowIcon
+            {% else %}
+            icon:redIcon
+            {% endif %}
+      }).addTo(map)
+          .bindPopup("Site: {{k.upper()}} <br> WQI<sub>WEIGHTED</sub>: {{v.wqi_wt}} <br><strong>{{v.class_wt}}</strong>").openPopup(),
+        {% endfor %}
+      ]);
+
+      var baseMaps = {
+          "Grayscale": layer,
+          "Streets": streets
+      };
+
+      var pointsMaps = {
+        "Points (non-weighted)": points,
+        "Points (weighted)": points_wt
+      }
+
+      // Now add the layer onto the map
+      map.addLayer(layer);
+      L.control.layers(baseMaps, pointsMaps).addTo(map);
+
+
+
+
+
+    </script>
+{% endblock %}

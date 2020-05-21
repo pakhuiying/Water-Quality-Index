@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Data entered
+{% endblock %}
+
+{% block main %}
+    <div class="justify" action="/enter" method="get">
+
+        <p>Here are the water quality parameters you have not logged (missing):</p>
+        <ul>
+        {% for item in missing_parameters if item != None %}
+            <li>{{item}}</li>
+        {% else %}
+            <li><p><i>Not applicable</i></p></li>
+        {% endfor %}
+        </ul>
+        <br>
+
+        <p>Here are the WQI results computed:</p>
+        <ul>
+        {% if missing_parameters|length ==0 %}
+        <li>WQI<sub>NON-WEIGHTED</sub>: {{wqi}} <strong>{{class_wqi}}</strong>  </li>
+        <li>WQI<sub>WEIGHTED</sub>: {{wqi_wt}} <strong>{{class_wqi_wt}}</strong></li>
+        {% else %}
+        <li>WQI<sub>NON-WEIGHTED (adjusted)</sub>: {{wqi}} <strong>{{class_wqi}}</strong></li>
+        <li>WQI<sub>WEIGHTED (adjusted)</sub>: {{wqi_wt}} <strong>{{class_wqi_wt}}</strong></li>
+        {% endif %}
+        </ul>
+    </div>
+    <br>
+    <a href = "/enter">Continue logging data</a><br>
+    <a href = "/data">View log history</a>
+{% endblock %}

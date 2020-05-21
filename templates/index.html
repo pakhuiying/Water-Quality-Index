@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block main %}
+    <div class="justify">
+    <h2>Background</h2>
+    <p>
+        Water quality monitoring is one of the most important pillars in water resource management.
+        However, water quality monitoring can be resource intensive, especially for developing countries with limited resources.
+        As such, Water Quality Indexes (WQI) are developed as a convenient tool to summarise general water quality
+    </p>
+    <hr>
+    <h3>Usage</h3>
+    <p>
+        <ul>
+            <li>The following web application allows user to input measured water quality parameters,
+            which subsequently will generate a WQI, regardless of missing data.</li>
+            <li>Users can also input an ID, date, and location for each observation, which will be saved into a database.</li>
+            <li>The observations will be displayed in interactive charts (<code>Chart.js</code>) and map (<code>Leaflet</code>).</li>
+            <li>The user can also download the data in a csv format for further processing.</li>
+            <li>The user can also download the charts in a png format for their perusal in reports etc.</li>
+
+        </ul>
+    </p>
+    <hr>
+    <h3>Output</h3>
+    <p>
+        <ul>
+            <li>WQI<sub>NON-WEIGHTED</sub> (Water quality parameters have equal weights)</li>
+            <li>WQI<sub>WEIGHTED</sub> (Water quality parameters have unequal weights)</li>
+            <li>WQI<sub>ADJUSTED</sub> (Adjusted for missing values)</li>
+            <li>WQI<sub>NON-ADJUSTED</sub> (Not adjusted for missing value. By default, gives an <strong>NA</strong>)</li>
+        </ul>
+        <br>
+        Refer to <a href = "documentation.html">documentation</a> for more information
+    </p>
+    </div>
+{% endblock %}

@@ -1,0 +1,521 @@
+{% extends "layout.html" %}
+
+{% block scripts %}
+    <!--script for full screen-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <!--script for download canvas as png image-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js"></script>
+    <script src="https://cdn.rawgit.com/eligrey/canvas-toBlob.js/master/canvas-toBlob.js"></script>
+{% endblock %}
+
+{% block title %}
+    Visualisation
+{% endblock %}
+
+{% block main %}
+    <!--frequency charts-->
+    <div id = "container" class="chart-container" style="position: relative; height:30vh; width:35vw; display: inline-block;">
+    <canvas id="bar"></canvas>
+    <button type="button" id="toggle_bar" class="btn btn-outline-dark"><i class="fa fa-expand"></i></button>
+    <button type="button" id="save-bar" class="btn btn-outline-dark"><i class="fa fa-download"></i></button>
+    </div>
+
+    <div id = "container" class="chart-container" style="position: relative; height:30vh; width:35vw; display: inline-block;">
+    <canvas id="bar_wt"></canvas>
+    <button type="button" id="toggle_bar_wt" class="btn btn-outline-dark"><i class="fa fa-expand"></i></button>
+    <button type="button" id="save-bar_wt" class="btn btn-outline-dark"><i class="fa fa-download"></i></button>
+    </div>
+    <br>
+    <br>
+
+    <!--bar & radar charts-->
+    <div id = "container" class="chart-container" style="position: relative; height:30vh; width:35vw; display: inline-block;">
+    <canvas id="wqi"></canvas>
+    <button type="button" id="toggle_wqi" class="btn btn-outline-dark"><i class="fa fa-expand"></i></button>
+    <button type="button" id="save-wqi" class="btn btn-outline-dark"><i class="fa fa-download"></i></button>
+    </div>
+
+    <div id = "container" class="chart-container" style="position: relative; height:30vh; width:35vw; display: inline-block;">
+    <canvas id="radar"></canvas>
+    <button type="button" id="toggle_radar" class="btn btn-outline-dark"><i class="fa fa-expand"></i></button>
+    <button type="button" id="save-radar" class="btn btn-outline-dark"><i class="fa fa-download"></i></button>
+    </div>
+    <br>
+    <br>
+    <!--time series charts-->
+    <div id = "container" class="chart-container" style="position: relative; height:30vh; width:35vw; display: inline-block;">
+    <canvas id="time_series"></canvas>
+    <button type="button" id="toggle_time" class="btn btn-outline-dark"><i class="fa fa-expand"></i></button>
+    <button type="button" id="save-time" class="btn btn-outline-dark"><i class="fa fa-download"></i></button>
+    </div>
+
+    <div id = "container" class="chart-container" style="position: relative; height:30vh; width:35vw; display: inline-block;">
+    <canvas id="time_series_wt"></canvas>
+    <button type="button" id="toggle_time_wt" class="btn btn-outline-dark"><i class="fa fa-expand"></i></button>
+    <button type="button" id="save-time_wt" class="btn btn-outline-dark"><i class="fa fa-download"></i></button>
+    </div>
+
+
+    <script>
+    //toggle fullscreen code
+    function toggle_fullscreen(e){
+        // if already full screen; exit
+        // else go fullscreen
+        if (
+          document.fullscreenElement ||
+          document.webkitFullscreenElement ||
+          document.mozFullScreenElement ||
+          document.msFullscreenElement
+        ) {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+          }
+        } else {
+          element = $(this).parent().get(0);
+          if (element.requestFullscreen) {
+            element.requestFullscreen();
+          } else if (element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();
+          } else if (element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+          } else if (element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+          }
+        }
+    }
+
+    $('#toggle_bar').on('click', toggle_fullscreen);
+    $('#toggle_bar_wt').on('click', toggle_fullscreen);
+    $('#toggle_wqi').on('click', toggle_fullscreen);
+    $('#toggle_radar').on('click', toggle_fullscreen);
+    $('#toggle_time').on('click', toggle_fullscreen);
+    $('#toggle_time_wt').on('click', toggle_fullscreen);
+
+        /*$('#toggle_fullscreen').on('click', function(){
+        // if already full screen; exit
+        // else go fullscreen
+        if (
+          document.fullscreenElement ||
+          document.webkitFullscreenElement ||
+          document.mozFullScreenElement ||
+          document.msFullscreenElement
+        ) {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+          }
+        } else {
+          element = $('#container').get(0);
+          if (element.requestFullscreen) {
+            element.requestFullscreen();
+          } else if (element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();
+          } else if (element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+          } else if (element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+          }
+        }
+      }
+      );*/
+
+      //save as png jquery
+      $("#save-bar").click(function() {
+       	    $("#bar").get(0).toBlob(function(blob) {
+          		saveAs(blob, "bar.png");
+      		});
+      });
+
+     $("#save-bar_wt").click(function() {
+       	    $("#bar_wt").get(0).toBlob(function(blob) {
+          		saveAs(blob, "bar_wt.png");
+      		});
+      });
+
+     $("#save-wqi").click(function() {
+       	    $("#wqi").get(0).toBlob(function(blob) {
+          		saveAs(blob, "wqi.png");
+      		});
+      });
+
+     $("#save-radar").click(function() {
+       	    $("#radar").get(0).toBlob(function(blob) {
+          		saveAs(blob, "radar.png");
+      		});
+      });
+
+     $("#save-time").click(function() {
+       	    $("#time_series").get(0).toBlob(function(blob) {
+          		saveAs(blob, "time.png");
+      		});
+      });
+
+     $("#save-time_wt").click(function() {
+       	    $("#time_series_wt").get(0).toBlob(function(blob) {
+          		saveAs(blob, "time_wt.png");
+      		});
+      });
+
+        // Global parameters:
+        // do not resize the chart canvas when its container does (keep at 600x400px). responsive = false;
+        Chart.defaults.global.responsive = true;
+
+        // define the chart data
+        var chartData = {
+          labels : [{% for item in freq_classes.keys() %}
+                     "{{item|safe}}",
+                    {% endfor %}],
+          datasets : [{
+              label: 'Classes',
+              fill: true,
+              lineTension: 0.1,
+              //backgroundColor: ["rgba(0,0,255,0.4)","rgba(0,255,255,0.4)","rgba(0,255,0,0.4)","rgba(255,255,0,0.4)","rgba(255,0,0,0.4)"],
+              backgroundColor: [{% for item in rgb %}
+                               "{{item|safe}}",
+                              {% endfor %}],
+              borderColor: "rgba(160,160,160,1)",
+              borderCapStyle: 'butt',
+              borderDash: [],
+              borderDashOffset: 0.0,
+              borderJoinStyle: 'miter',
+              pointBorderColor: "rgba(0,0,0,1)",
+              pointBackgroundColor: "#fff",
+              pointBorderWidth: 1,
+              pointHoverRadius: 5,
+              pointHoverBackgroundColor: "rgba(75,192,192,1)",
+              pointHoverBorderColor: "rgba(220,220,220,1)",
+              pointHoverBorderWidth: 2,
+              pointRadius: 1,
+              pointHitRadius: 10,
+              data : [{% for item in freq_classes.values() %}
+                        {{item}},
+                      {% endfor %}],
+              spanGaps: false,
+
+          }]
+        }
+
+        // define the chart_wt data
+        var chartData_wt = {
+          labels : [{% for item in freq_classes_wt.keys() %}
+                     "{{item|safe}}",
+                    {% endfor %}],
+          datasets : [{
+              label: 'Classes',
+              fill: true,
+              lineTension: 0.1,
+              //backgroundColor: ["rgba(0,0,255,0.4)","rgba(0,255,255,0.4)","rgba(0,255,0,0.4)","rgba(255,255,0,0.4)","rgba(255,0,0,0.4)"],
+              backgroundColor: [{% for item in rgb_wt %}
+                               "{{item|safe}}",
+                              {% endfor %}],
+              borderColor: "rgba(160,160,160,1)",
+              borderCapStyle: 'butt',
+              borderDash: [],
+              borderDashOffset: 0.0,
+              borderJoinStyle: 'miter',
+              pointBorderColor: "rgba(0,0,0,1)",
+              pointBackgroundColor: "#fff",
+              pointBorderWidth: 1,
+              pointHoverRadius: 5,
+              pointHoverBackgroundColor: "rgba(75,192,192,1)",
+              pointHoverBorderColor: "rgba(220,220,220,1)",
+              pointHoverBorderWidth: 2,
+              pointRadius: 1,
+              pointHitRadius: 10,
+              data : [{% for item in freq_classes_wt.values() %}
+                        {{item}},
+                      {% endfor %}],
+              spanGaps: false,
+
+          }]
+        }
+
+        // define the chart_wt data
+        var wqiData = {
+          labels : [{% for item in avg_list %}
+                     "{{item.site_id|safe}}",
+                    {% endfor %}],
+          datasets : [{
+              label: 'WQI (non-weighted)',
+              backgroundColor: "rgba(96,96,96,0.4)",
+              data : [{% for item in avg_list %}
+                        {{item.avg_wqi|round(2)}},
+                      {% endfor %}],
+          }, {
+
+              label: 'WQI (weighted)',
+              backgroundColor: "rgba(192,192,192,0.4)",
+              data : [{% for item in avg_list %}
+                        {{item.avg_wqi_wt|round(2)}},
+                      {% endfor %}],
+
+          }]
+        }
+
+        // get chart canvas
+        var ctx = document.getElementById("bar").getContext("2d");
+        var ctx_wt = document.getElementById("bar_wt").getContext("2d");
+        var wqi = document.getElementById("wqi").getContext("2d");
+        var radar = document.getElementById("radar").getContext("2d");
+        var time_series = document.getElementById("time_series").getContext("2d");
+        var time_series_wt = document.getElementById("time_series_wt").getContext("2d");
+
+        var bar_scales = {
+                yAxes: [{
+                  scaleLabel: {
+                    display: true,
+                    labelString: 'Frequency', //label for y axis
+                    fontSize:14
+                  },
+                  ticks: {
+                        stepSize: 5, //make y axis in integers
+                        beginAtZero: true
+                    },
+                  gridLines: {
+                        display: false
+                    }
+                }],
+
+                xAxes: [{
+                  scaleLabel: {
+                    display: true,
+                    labelString: 'Water quality classes', //label for x axis
+                    fontSize:14
+                  },
+                  gridLines: {
+                        display: false
+                    }
+                }]
+              }
+        // create the chart using the chart canvas
+        var myChart = new Chart(ctx, {
+          type: 'bar',
+          data: chartData,
+          options: {
+              scales: bar_scales,
+
+              legend: {
+                display: false
+              },
+
+              title: {
+                display: true,
+                position: 'bottom',
+                text: "Frequency plot of water quality classes (non-weighted)",
+                fontSize: 16
+              }
+            }
+
+        });
+
+        // create the chart_wt using the chart canvas
+        var myChart_wt = new Chart(ctx_wt, {
+          type: 'bar',
+          data: chartData_wt,
+          options: {
+              scales: bar_scales,
+
+              legend: {
+                display: false
+              },
+
+              title: {
+                display: true,
+                position: 'bottom',
+                text: "Frequency plot of water quality classes (weighted)",
+                fontSize: 16
+              }
+            }
+
+        });
+
+        // create the wqi_chart using the chart canvas
+        var wqi = new Chart(wqi, {
+          type: 'bar',
+          data: wqiData,
+          options: {
+              scales: {
+                yAxes: [{
+                  scaleLabel: {
+                    display: true,
+                    labelString: 'WQI', //label for y axis
+                    fontSize:14
+                  },
+
+                  gridLines: {
+                        display: false
+                    }
+                }],
+
+                xAxes: [{
+                  scaleLabel: {
+                    display: true,
+                    labelString: 'Sites', //label for x axis
+                    fontSize:14
+                  },
+                  gridLines: {
+                        display: false
+                    }
+
+                }]
+
+              },
+
+              legend: {
+                display: true
+              },
+
+              title: {
+                display: true,
+                position: 'bottom',
+                text: "WQI of each site",
+                fontSize: 16
+              }
+            }
+
+        });
+
+        // create the radar chart using the chart canvas
+        var wqi = new Chart(radar, {
+          type: 'radar',
+          data: {
+            labels: [{% for item in wql_parameters %} "{{item}}", {% endfor %}],
+            datasets:[
+              {% for item in datasets_list %}
+              {label: "{{item.label}}",
+              backgroundColor: "{{item.backgroundColor}}",
+              borderColor: "{{item.borderColor}}",
+              data: {{item.data}}
+              },
+              {% endfor %}
+            ],
+          },
+          options: {
+              title: {
+                display: true,
+                position: 'bottom',
+                text: "Radar plot of water quality constituents",
+                fontSize: 16
+              }
+          }
+        });
+
+        var timeFormat = 'DD/MM/YYYY';
+
+        function toupper(string) {
+          var str = string;
+          return str.toUpperCase();
+        }
+
+        //format time string to date format
+        function newDateString(date) {
+    			return moment(date, "DD-MM-YYYY").format(timeFormat);
+    		}
+
+    		var time_series_scale = {
+                xAxes:[{
+                  type: 'time',
+                  time: {
+                    parser: timeFormat,
+                    tooltipFormat: 'll',
+                    unit:'day'
+                  },
+      						scaleLabel: {
+      							display: true,
+      							labelString: 'Date'
+      						},
+      						gridLines: {
+                        display: false
+                  }
+                }],
+                yAxes:[{
+      						scaleLabel: {
+      							display: true,
+      							labelString: 'WQI'
+      						},
+                  gridLines: {
+                        display: false
+                  }
+                }]
+              }
+
+    		var time_series = new Chart(time_series, {
+    		  type: 'line',
+    		  data: {
+    		    labels: [{% for date in date_seq %} newDateString('{{date|safe}}'), {% endfor %}],
+    		    datasets:[ {% for item in time_nest_list %}
+    		      {
+    		      label: toupper('{{item.label}}'),
+    		      fill: false,
+    		      backgroundColor: '{{item.backgroundColor}}',
+    		      borderColor: '{{item.borderColor}}',
+    		      data:[ {% for dict in item.data %}
+    		        {
+    		        x: newDateString("{{dict.date|safe}}"),
+    		        y: {{dict.wqi}}
+    		      },
+    		      {% endfor %}
+    		      ]
+    		    },
+    		    {% endfor %}
+    		    ]
+    		  },
+    		  options: {
+              title: {
+                display: true,
+                position: 'bottom',
+                text: "Time series of WQI (non-weighted) by sites",
+                fontSize: 16
+              },
+              scales: time_series_scale
+    		  }
+    		});
+
+    		var time_series_wt = new Chart(time_series_wt, {
+    		  type: 'line',
+    		  data: {
+    		    labels: [newDateString('13/5/2020'), newDateString('14/5/2020'),
+    		    newDateString('15/5/2020'), newDateString('16/5/2020')],
+    		    datasets:[ {% for item in time_nest_list %}
+    		      {
+    		      label: toupper('{{item.label}}'),
+    		      fill: false,
+    		      backgroundColor: '{{item.backgroundColor}}',
+    		      borderColor: '{{item.borderColor}}',
+    		      data:[ {% for dict in item.data %}
+    		        {
+    		        x: newDateString("{{dict.date|safe}}"),
+    		        y: {{dict.wqi_wt}}
+    		      },
+    		      {% endfor %}
+    		      ]
+    		    },
+    		    {% endfor %}
+    		    ]
+    		  },
+    		  options: {
+              title: {
+                display: true,
+                position: 'bottom',
+                text: "Time series of WQI (weighted) by sites",
+                fontSize: 16
+              },
+              scales: time_series_scale
+    		  }
+    		});
+
+    </script>
+{% endblock %}

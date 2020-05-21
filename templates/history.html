@@ -1,0 +1,118 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    History
+{% endblock %}
+
+{% block main %}
+    <!--<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/fixedcolumns/3.3.1/css/fixedColumns.dataTables.min.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/fixedcolumns/3.3.1/js/dataTables.fixedColumns.min.js"></script>-->
+
+
+    <!-- Datatables Plugin to sort table
+    <link rel="stylesheet" type="text/css" href="/DataTables/datatables.css">
+    <script type="text/javascript" charset="utf8" src="/DataTables/datatables.js"></script>-->
+
+    <!--<script type="text/javascript">
+        $(document).ready(function() {
+            var table = $('#table_id').DataTable( {
+                scrollY:        "300px",
+                scrollX:        true,
+                scrollCollapse: true,
+                paging:         false,
+                fixedColumns:   {
+                    leftColumns: 1
+
+                }
+            } );
+        } );
+    </script>-->
+
+    <div class="justify">
+    <form action="/getCSV" method="post">
+          <h3 style="display:inline;">Log History</h3><button class="btn btn-outline-primary" style="float: right;" type="submit">Download as csv file</button>
+    </form>
+    </div>
+    <br>
+    <div class="table-responsive">
+    <table id="table_id" class="table table-hover">
+    <!--<table id="table_id" class="display">-->
+
+      <thead>
+        <tr>
+
+          <th scope="col">Site ID</th>
+          <th scope="col">Date</th>
+          <th scope="col">Latitude</th>
+          <th scope="col">Longitude</th>
+          <th scope="col">As (ppb)</th>
+          <th scope="col">Cd (ppb)</th>
+          <th scope="col">COD (mg/l)</th>
+          <th scope="col">Cr (ppb)</th>
+          <th scope="col">DO (mg/l)</th>
+          <th scope="col">E.coli (MPN/100ml)</th>
+          <th scope="col">F (mg/l)</th>
+          <th scope="col">NH3-N (mg/l)</th>
+          <th scope="col">NO2-N (mg/l)</th>
+          <th scope="col">NO3-N (mg/l)</th>
+          <th scope="col">Pb (ppb)</th>
+          <th scope="col">PO4 (mg/l)</th>
+          <th scope="col">Turbidity (NTU)</th>
+          <th scope="col">WQI<sub>NON-WEIGHTED</sub></th>
+          <th scope="col">Class<sub>NON-WEIGHTED</sub></th>
+          <th scope="col">WQI<sub>WEIGHTED</sub></th>
+          <th scope="col">Class<sub>WEIGHTED</sub></th>
+          <th scope="col">Action</sub></th>
+        </tr>
+      </thead>
+      {% for item in data %}
+      <tbody>
+        <tr>
+          <th scope="row">{{item.site_id}}</th>
+          <td>{{item.date}}</td>
+          <td>{{item.lat}}</td>
+          <td>{{item.lon}}</td>
+          <td>{{item.arsenic}}</td>
+          <td>{{item.cd}}</td>
+          <td>{{item.cod}}</td>
+          <td>{{item.cr}}</td>
+          <td>{{item.do}}</td>
+          <td>{{item.ecoli}}</td>
+          <td>{{item.fluoride}}</td>
+          <td>{{item.nh3}}</td>
+          <td>{{item.no2}}</td>
+          <td>{{item.no3}}</td>
+          <td>{{item.pb}}</td>
+          <td>{{item.po4}}</td>
+          <td>{{item.turbidity}}</td>
+          <td>{{item.wqi}}</td>
+          <td>{{item.class_nonwt}}</td>
+          <td>{{item.wqi_wt}}</td>
+          <td>{{item.class_wt}}</td>
+          <td>
+            <form action="/data" method="post" class="delete">
+              <input type="hidden" value="{{item.rowid}}" name="delete"/>
+              <input type="submit" value="Delete" onclick="return confirm('Do you confirm deleting this entry?')"/>
+            </form>
+          </td>
+
+        </tr>
+      </tbody>
+      {% endfor %}
+
+    </table>
+
+    </div>
+    <p class=justify id="textbox">*Tables can be scrolled horizontally to view other columns</p>
+    <br>
+
+    <form action="/delete_all" method="post">
+      <button type="submit" class="btn btn-danger" onclick="return confirm('Do you confirm deleting ALL data?')">Delete all data</button>
+
+            </form>
+
+
+{% endblock %}
